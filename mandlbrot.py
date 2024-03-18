@@ -1,8 +1,7 @@
 #Mandelbrot fractal using parallel processing:
 import numpy as np #numerical computations
 from PIL import Image #for image creation and manipulation
-from numba import jit, prange, # for JIT (just-in-time) compilation to speed up the computation
-
+from numba import jit, prange # for JIT (just-in-time) compilation to speed up the computation
 @jit
 def mandelbrot(c, threshold):
     """
@@ -42,31 +41,29 @@ def generate_mandelbrot(img, min_re, max_re, min_im, max_im, threshold):
             cy = y * (max_im - min_im) / height + min_im
             c = complex(cx, cy)
             color_index = mandelbrot(c, threshold)
-            img[y, x] = (color_index, color_index, color_index)
-            #img[y, x] = map_color(color_index, threshold)
-
+            #img[y, x] = (color_index, color_index, color_index) # all black and border white
+            img[y, x] = map_color(color_index, threshold) #if you want with border blue and within the set with white
 @jit
 def map_color(iterations, threshold):
     """
     Maps the number of iterations to a color gradient.
     """
     if iterations == threshold:
-        return (255, 255, 255)  # Set points within the Mandelbrot set to white
+        return (255, 255, 255)  # Set points within the Mandelbrot set to black
     else:
         # Example color gradient from blue to white
         blue_value = int(255 * iterations / threshold)
         return (0, 0, blue_value)
-    x
 def main():
     """
     This function sets up the parameters for generating the Mandelbrot fractal image
     - It creates a new image objects, calls the "generate_mandelbrot"
     function to generate the fractals, saves the image and prints a message indicating that the image
     has been generated
-    - The if __name__ == "__main__": block ensures that the main function is executed when the script 
+    - he if __name__ == "__main__": block ensures that the main function is executed when the script 
     is run directly, but not when it's imported as a module into another script.
     """
-    imgx, imgy = 8000 * 10, 6000 * 10
+    imgx, imgy = 1000 * 10, 800 * 10
     min_re, max_re = -2.5, 1.0
     min_im, max_im = -1.2, 1.2
     threshold = 1000
@@ -74,8 +71,8 @@ def main():
     img = np.zeros((imgy, imgx, 3), dtype=np.uint8)
     generate_mandelbrot(img, min_re, max_re, min_im, max_im, threshold)
     img = Image.fromarray(img)
-    img.save("/Users/gloriacarrascal/fractals/images/mandelbrot_4.png")
-    print("Generated mandelbrot_4.png")
+    img.save("/Users/gloriacarrascal/fractals/images/mandelbrot_colorgamma.png")
+    print("Generated mandelbrot_colorgamma.png")
 
 if __name__ == "__main__":
     main()
